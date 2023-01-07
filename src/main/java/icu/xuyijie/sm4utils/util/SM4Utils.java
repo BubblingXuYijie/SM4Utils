@@ -43,7 +43,7 @@ public class SM4Utils {
 
     private static final boolean HEX_STRING = false;
 
-    public SM4Utils() {
+    private SM4Utils() {
 
     }
 
