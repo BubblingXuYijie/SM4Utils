@@ -7,8 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author: 徐一杰
- * @date: 2022/10/11
+ * @author 徐一杰
+ * @date 2022/10/11
  * <p>
  * ECB 加密模式
  * 不使用自定义 secretKey，一般用于后端自行加解密,如果是前端加密后端解密，则需要自定义secretKey，前后端一致才能正确解密

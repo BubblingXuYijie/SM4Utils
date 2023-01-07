@@ -4,8 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * @author: 徐一杰
- * @date: 2022/10/11
+ * @author 徐一杰
+ * @date 2022/10/11
  */
 class SM4 {
     public static final int SM4_ENCRYPT = 1;

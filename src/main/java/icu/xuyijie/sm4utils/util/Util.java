@@ -3,8 +3,8 @@ package icu.xuyijie.sm4utils.util;
 import java.math.BigInteger;
 
 /**
- * @author: 徐一杰
- * @date: 2022/10/11
+ * @author 徐一杰
+ * @date 2022/10/11
  */
 class Util {
 
