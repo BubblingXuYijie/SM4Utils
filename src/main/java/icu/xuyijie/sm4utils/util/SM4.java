@@ -1,5 +1,8 @@
 package icu.xuyijie.sm4utils.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -8,6 +11,8 @@ import java.io.ByteArrayOutputStream;
  * @date 2022/10/11
  */
 class SM4 {
+    private static final Logger logger = LoggerFactory.getLogger(SM4.class);
+
     public static final int SM4_ENCRYPT = 1;
 
     public static final int SM4_DECRYPT = 0;
@@ -71,8 +76,8 @@ class SM4 {
     }
 
     private int sm4Lt(int ka) {
-        int bb = 0;
-        int c = 0;
+        int bb;
+        int c;
         byte[] a = new byte[4];
         byte[] b = new byte[4];
         PUT_ULONG_BE(ka, a, 0);
@@ -90,8 +95,8 @@ class SM4 {
     }
 
     private int sm4CalciRK(int ka) {
-        int bb = 0;
-        int rk = 0;
+        int bb;
+        int rk;
         byte[] a = new byte[4];
         byte[] b = new byte[4];
         PUT_ULONG_BE(ka, a, 0);
@@ -140,10 +145,6 @@ class SM4 {
     }
 
     private byte[] padding(byte[] input, int mode) {
-        if (input == null) {
-            return null;
-        }
-
         byte[] ret;
         if (mode == SM4_ENCRYPT) {
             int p = 16 - input.length % 16;
@@ -162,11 +163,13 @@ class SM4 {
 
     public void sm4_setkey_enc(SM4_Context ctx, byte[] key) throws Exception {
         if (ctx == null) {
+            logger.error("ctx is null");
             throw new Exception("ctx is null!");
         }
 
         if (key == null || key.length != 16) {
-            throw new Exception("key error!");
+            logger.error("secretKey必须为 16 位，可包含字母、数字、标点");
+            throw new Exception("secretKey必须为 16 位，可包含字母、数字、标点");
         }
 
         ctx.mode = SM4_ENCRYPT;
@@ -175,7 +178,8 @@ class SM4 {
 
     public byte[] sm4_crypt_ecb(SM4_Context ctx, byte[] input) throws Exception {
         if (input == null) {
-            throw new Exception("input is null!");
+            logger.error("要加解密的数据为null");
+            throw new Exception("要加解密的数据为null");
         }
 
         if ((ctx.isPadding) && (ctx.mode == SM4_ENCRYPT)) {
@@ -204,11 +208,13 @@ class SM4 {
 
     public void sm4_setkey_dec(SM4_Context ctx, byte[] key) throws Exception {
         if (ctx == null) {
+            logger.error("ctx is null!");
             throw new Exception("ctx is null!");
         }
 
         if (key == null || key.length != 16) {
-            throw new Exception("key error!");
+            logger.error("secretKey必须为 16 位，可包含字母、数字、标点");
+            throw new Exception("secretKey必须为 16 位，可包含字母、数字、标点");
         }
 
         int i = 0;
@@ -227,11 +233,13 @@ class SM4 {
 
     public byte[] sm4_crypt_cbc(SM4_Context ctx, byte[] iv, byte[] input) throws Exception {
         if (iv == null || iv.length != 16) {
-            throw new Exception("iv error!");
+            logger.error("iv必须为 16 位，可包含字母、数字、标点");
+            throw new Exception("iv必须为 16 位，可包含字母、数字、标点");
         }
 
         if (input == null) {
-            throw new Exception("input is null!");
+            logger.error("要加解密的数据为null");
+            throw new Exception("要加解密的数据为null");
         }
 
         if (ctx.isPadding && ctx.mode == SM4_ENCRYPT) {

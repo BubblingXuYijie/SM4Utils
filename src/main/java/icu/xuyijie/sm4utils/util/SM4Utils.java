@@ -26,6 +26,9 @@ import java.util.regex.Pattern;
  * 经过CBC解密的密文为：SM4Utils.decryptData_CBC("sTyCl3G6TF311kIENzsKNg==","asdfghjklzxcvb!_","1234567890123456");
  */
 public class SM4Utils {
+    private SM4Utils() {
+
+    }
 
     /**
      * 默认 SECRET_KEY
@@ -42,10 +45,6 @@ public class SM4Utils {
     private static final String IV = "ZkR_SiNoSOFT=568";
 
     private static final boolean HEX_STRING = false;
-
-    private SM4Utils() {
-
-    }
 
     /**
      * 不要在方法里定义正则表达式规则,应定义为常量或字段,能加快正则匹配速度
@@ -297,7 +296,7 @@ public class SM4Utils {
 //    public static void main(String[] args) {
 //        System.out.println("经过ECB加密的密文为：" + SM4Utils.encryptData_ECB("123456"));
 //        System.out.println("经过ECB解密的密文为：" + SM4Utils.decryptData_ECB("UQZqWWcVSu7MIrMzWRD/wA=="));
-//        System.out.println("经过CBC加密的密文为：" + SM4Utils.encryptData_CBC("123456", "asdfghjklzxcvbnm", "1234567890123456"));
-//        System.out.println("经过CBC解密的密文为：" + SM4Utils.decryptData_CBC("RZUhE8Zeobfkn/sqnPXA+g==", "asdfghjklzxcvbnm", "1234567890123456"));
+//        System.out.println("经过CBC加密的密文为：" + SM4Utils.encryptData_CBC("123456", "1sdfghjklzxcvbnm", ".234567890@$^-_*"));
+//        System.out.println("经过CBC解密的密文为：" + SM4Utils.decryptData_CBC("nDYTqPakB7kMcxwJSfq05Q==", "1sdfghjklzxcvbnm", ".234567890@$^-_*"));
 //    }
 }
