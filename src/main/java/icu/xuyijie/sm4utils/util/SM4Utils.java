@@ -1,6 +1,8 @@
 package icu.xuyijie.sm4utils.util;
 
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
@@ -30,6 +32,8 @@ public class SM4Utils {
 
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(SM4Utils.class);
+
     /**
      * 默认 SECRET_KEY
      * 当时用ECB模式的时候，和前端key一致
@@ -46,9 +50,6 @@ public class SM4Utils {
 
     private static final boolean HEX_STRING = false;
 
-    /**
-     * 不要在方法里定义正则表达式规则,应定义为常量或字段,能加快正则匹配速度
-     */
     private static final Pattern P = Pattern.compile("\\s*|\t|\r|\n");
 
     /**
@@ -127,12 +128,16 @@ public class SM4Utils {
             keyBytes = secretKey.getBytes();
             SM4 sm4 = new SM4();
             sm4.sm4_setkey_dec(ctx, keyBytes);
-            byte[] decrypted = sm4.sm4_crypt_ecb(ctx, Base64.decodeBase64(cipherText));
-            return new String(decrypted, StandardCharsets.UTF_8);
+            try {
+                byte[] decrypted = sm4.sm4_crypt_ecb(ctx, Base64.decodeBase64(cipherText));
+                return new String(decrypted, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                logger.error("解密失败！", e);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            logger.error("解密失败！", e);
         }
+        return null;
     }
 
     /**
@@ -151,12 +156,16 @@ public class SM4Utils {
             keyBytes = SECRET_KEY.getBytes();
             SM4 sm4 = new SM4();
             sm4.sm4_setkey_dec(ctx, keyBytes);
-            byte[] decrypted = sm4.sm4_crypt_ecb(ctx, Base64.decodeBase64(cipherText));
-            return new String(decrypted, StandardCharsets.UTF_8);
+            try {
+                byte[] decrypted = sm4.sm4_crypt_ecb(ctx, Base64.decodeBase64(cipherText));
+                return new String(decrypted, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                logger.error("解密失败！", e);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            logger.error("解密失败！", e);
         }
+        return null;
     }
 
     /**
@@ -214,6 +223,7 @@ public class SM4Utils {
 
             SM4 sm4 = new SM4();
             sm4.sm4_setkey_enc(ctx, keyBytes);
+
             byte[] encrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, plainText.getBytes(StandardCharsets.UTF_8));
             String cipherText = Base64.encodeBase64String(encrypted);
             if (cipherText != null && cipherText.trim().length() > 0) {
@@ -253,12 +263,16 @@ public class SM4Utils {
 
             SM4 sm4 = new SM4();
             sm4.sm4_setkey_dec(ctx, keyBytes);
-            byte[] decrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, Base64.decodeBase64(cipherText));
-            return new String(decrypted, StandardCharsets.UTF_8);
+            try {
+                byte[] decrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, Base64.decodeBase64(cipherText));
+                return new String(decrypted, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                logger.error("解密失败！", e);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            logger.error("解密失败！", e);
         }
+        return null;
     }
 
     /**
@@ -285,12 +299,16 @@ public class SM4Utils {
 
             SM4 sm4 = new SM4();
             sm4.sm4_setkey_dec(ctx, keyBytes);
-            byte[] decrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, Base64.decodeBase64(cipherText));
-            return new String(decrypted, StandardCharsets.UTF_8);
+            try {
+                byte[] decrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, Base64.decodeBase64(cipherText));
+                return new String(decrypted, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                logger.error("解密失败！", e);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            logger.error("解密失败！", e);
         }
+        return null;
     }
 
 //    public static void main(String[] args) {
