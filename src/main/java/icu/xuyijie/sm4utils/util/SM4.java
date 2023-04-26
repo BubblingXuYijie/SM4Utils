@@ -161,27 +161,37 @@ class SM4 {
         return ret;
     }
 
-    public void sm4_setkey_enc(SM4_Context ctx, byte[] key) throws Exception {
+    private void validateDecrypt(SM4_Context ctx, byte[] key) throws Exception {
         if (ctx == null) {
             logger.error("ctx is null");
             throw new Exception("ctx is null!");
         }
-
         if (key == null || key.length != 16) {
             logger.error("secretKey必须为 16 位，可包含字母、数字、标点");
             throw new Exception("secretKey必须为 16 位，可包含字母、数字、标点");
         }
+    }
 
+    private void validateEncrypt(String type, byte[] iv, byte[] input) throws Exception {
+        if (SM4Utils.CBC.equals(type) && (iv == null || iv.length != 16)) {
+            logger.error("iv必须为 16 位，可包含字母、数字、标点");
+            throw new Exception("iv必须为 16 位，可包含字母、数字、标点");
+        }
+
+        if (input == null) {
+            logger.error("要加解密的数据为null");
+            throw new Exception("要加解密的数据为null");
+        }
+    }
+
+    public void sm4_setkey_enc(SM4_Context ctx, byte[] key) throws Exception {
+        validateDecrypt(ctx, key);
         ctx.mode = SM4_ENCRYPT;
         sm4_setkey(ctx.sk, key);
     }
 
     public byte[] sm4_crypt_ecb(SM4_Context ctx, byte[] input) throws Exception {
-        if (input == null) {
-            logger.error("要加解密的数据为null");
-            throw new Exception("要加解密的数据为null");
-        }
-
+        validateEncrypt(SM4Utils.ECB, null, input);
         if ((ctx.isPadding) && (ctx.mode == SM4_ENCRYPT)) {
             input = padding(input, SM4_ENCRYPT);
         }
@@ -207,17 +217,8 @@ class SM4 {
     }
 
     public void sm4_setkey_dec(SM4_Context ctx, byte[] key) throws Exception {
-        if (ctx == null) {
-            logger.error("ctx is null!");
-            throw new Exception("ctx is null!");
-        }
-
-        if (key == null || key.length != 16) {
-            logger.error("secretKey必须为 16 位，可包含字母、数字、标点");
-            throw new Exception("secretKey必须为 16 位，可包含字母、数字、标点");
-        }
-
-        int i = 0;
+        validateDecrypt(ctx, key);
+        int i;
         ctx.mode = SM4_DECRYPT;
         sm4_setkey(ctx.sk, key);
         for (i = 0; i < 16; i++) {
@@ -232,16 +233,7 @@ class SM4 {
     }
 
     public byte[] sm4_crypt_cbc(SM4_Context ctx, byte[] iv, byte[] input) throws Exception {
-        if (iv == null || iv.length != 16) {
-            logger.error("iv必须为 16 位，可包含字母、数字、标点");
-            throw new Exception("iv必须为 16 位，可包含字母、数字、标点");
-        }
-
-        if (input == null) {
-            logger.error("要加解密的数据为null");
-            throw new Exception("要加解密的数据为null");
-        }
-
+        validateEncrypt(SM4Utils.CBC, iv, input);
         if (ctx.isPadding && ctx.mode == SM4_ENCRYPT) {
             input = padding(input, SM4_ENCRYPT);
         }

@@ -48,67 +48,104 @@ public class SM4Utils {
      */
     private static final String IV = "ZkR_SiNoSOFT=568";
 
+    static final String ECB = "ECB";
+
+    static final String CBC = "CBC";
+
     private static final boolean HEX_STRING = false;
 
     private static final Pattern P = Pattern.compile("\\s*|\t|\r|\n");
+
+    private static String encryptData(String type, String plainText, String secretKey, String iv) {
+        try {
+            SM4_Context ctx = new SM4_Context();
+            ctx.isPadding = true;
+            ctx.mode = SM4.SM4_ENCRYPT;
+
+            byte[] keyBytes = secretKey == null ? SECRET_KEY.getBytes() : secretKey.getBytes();
+            SM4 sm4 = new SM4();
+            sm4.sm4_setkey_enc(ctx, keyBytes);
+
+            String cipherText;
+            if (ECB.equals(type)) {
+                byte[] encrypted = sm4.sm4_crypt_ecb(ctx, plainText.getBytes(StandardCharsets.UTF_8));
+                cipherText = Base64.encodeBase64String(encrypted);
+                if (cipherText != null && cipherText.trim().length() > 0) {
+                    Matcher m = P.matcher(cipherText);
+                    cipherText = m.replaceAll("");
+                }
+            } else {
+                byte[] ivBytes = iv == null ? IV.getBytes() : iv.getBytes();
+                byte[] encrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, plainText.getBytes(StandardCharsets.UTF_8));
+                cipherText = Base64.encodeBase64String(encrypted);
+                if (cipherText != null && cipherText.trim().length() > 0) {
+                    Matcher m = P.matcher(cipherText);
+                    cipherText = m.replaceAll("");
+                }
+            }
+            return cipherText;
+        } catch (Exception e) {
+            logger.error("加密失败！", e);
+            return null;
+        }
+    }
+
+    private static String decryptData(String type, String cipherText, String secretKey, String iv) {
+        if (cipherText.length() != 24) {
+            logger.error("请传入正确的SM4密文！");
+            return null;
+        }
+        try {
+            SM4_Context ctx = new SM4_Context();
+            ctx.isPadding = true;
+            ctx.mode = SM4.SM4_DECRYPT;
+
+            SM4 sm4 = new SM4();
+            if (ECB.equals(type)) {
+                byte[] keyBytes = secretKey == null ? SECRET_KEY.getBytes() : secretKey.getBytes();
+                sm4.sm4_setkey_dec(ctx, keyBytes);
+                byte[] decrypted = sm4.sm4_crypt_ecb(ctx, Base64.decodeBase64(cipherText));
+                return new String(decrypted, StandardCharsets.UTF_8);
+            } else {
+                byte[] keyBytes;
+                byte[] ivBytes;
+                if (HEX_STRING) {
+                    keyBytes = Util.hexStringToBytes(secretKey);
+                    ivBytes = Util.hexStringToBytes(iv);
+                } else {
+                    keyBytes = secretKey == null ? SECRET_KEY.getBytes() : secretKey.getBytes();
+                    ivBytes = iv == null ? IV.getBytes() : iv.getBytes();
+                }
+                sm4.sm4_setkey_dec(ctx, keyBytes);
+                byte[] decrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, Base64.decodeBase64(cipherText));
+                return new String(decrypted, StandardCharsets.UTF_8);
+            }
+        } catch (Exception e) {
+            logger.error("解密失败！请检查密钥和密文是否对应", e);
+            return null;
+        }
+    }
+
 
     /**
      * ECB模式加密，自定义密钥，加解密密钥需一致
      *
      * @param plainText 要加密的数据
      * @param secretKey 密钥，必须为 16 位，可包含字母、数字、标点
-     * @return
+     * @return 加密后的字符串
      */
     public static String encryptData_ECB(String plainText, String secretKey) {
-        try {
-            SM4_Context ctx = new SM4_Context();
-            ctx.isPadding = true;
-            ctx.mode = SM4.SM4_ENCRYPT;
-
-            byte[] keyBytes;
-            keyBytes = secretKey.getBytes();
-            SM4 sm4 = new SM4();
-            sm4.sm4_setkey_enc(ctx, keyBytes);
-            byte[] encrypted = sm4.sm4_crypt_ecb(ctx, plainText.getBytes(StandardCharsets.UTF_8));
-            String cipherText = Base64.encodeBase64String(encrypted);
-            if (cipherText != null && cipherText.trim().length() > 0) {
-                Matcher m = P.matcher(cipherText);
-                cipherText = m.replaceAll("");
-            }
-            return cipherText;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return encryptData(ECB, plainText, secretKey, null);
     }
 
     /**
      * ECB模式加密，默认密钥
      *
      * @param plainText 要加密的数据
-     * @return
+     * @return 加密后的字符串
      */
     public static String encryptData_ECB(String plainText) {
-        try {
-            SM4_Context ctx = new SM4_Context();
-            ctx.isPadding = true;
-            ctx.mode = SM4.SM4_ENCRYPT;
-
-            byte[] keyBytes;
-            keyBytes = SECRET_KEY.getBytes();
-            SM4 sm4 = new SM4();
-            sm4.sm4_setkey_enc(ctx, keyBytes);
-            byte[] encrypted = sm4.sm4_crypt_ecb(ctx, plainText.getBytes(StandardCharsets.UTF_8));
-            String cipherText = Base64.encodeBase64String(encrypted);
-            if (cipherText != null && cipherText.trim().length() > 0) {
-                Matcher m = P.matcher(cipherText);
-                cipherText = m.replaceAll("");
-            }
-            return cipherText;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return encryptData(ECB, plainText, null, null);
     }
 
     /**
@@ -116,56 +153,20 @@ public class SM4Utils {
      *
      * @param cipherText 要解密的数据
      * @param secretKey 密钥，必须为 16 位，可包含字母、数字、标点
-     * @return
+     * @return 解密后的字符串
      */
     public static String decryptData_ECB(String cipherText, String secretKey) {
-        try {
-            SM4_Context ctx = new SM4_Context();
-            ctx.isPadding = true;
-            ctx.mode = SM4.SM4_DECRYPT;
-
-            byte[] keyBytes;
-            keyBytes = secretKey.getBytes();
-            SM4 sm4 = new SM4();
-            sm4.sm4_setkey_dec(ctx, keyBytes);
-            try {
-                byte[] decrypted = sm4.sm4_crypt_ecb(ctx, Base64.decodeBase64(cipherText));
-                return new String(decrypted, StandardCharsets.UTF_8);
-            } catch (Exception e) {
-                logger.error("解密失败！", e);
-            }
-        } catch (Exception e) {
-            logger.error("解密失败！", e);
-        }
-        return null;
+        return decryptData(ECB, cipherText, secretKey, null);
     }
 
     /**
      * ECB模式解密，默认密钥
      *
      * @param cipherText 要解密的数据
-     * @return
+     * @return 解密后的字符串
      */
     public static String decryptData_ECB(String cipherText) {
-        try {
-            SM4_Context ctx = new SM4_Context();
-            ctx.isPadding = true;
-            ctx.mode = SM4.SM4_DECRYPT;
-
-            byte[] keyBytes;
-            keyBytes = SECRET_KEY.getBytes();
-            SM4 sm4 = new SM4();
-            sm4.sm4_setkey_dec(ctx, keyBytes);
-            try {
-                byte[] decrypted = sm4.sm4_crypt_ecb(ctx, Base64.decodeBase64(cipherText));
-                return new String(decrypted, StandardCharsets.UTF_8);
-            } catch (Exception e) {
-                logger.error("解密失败！", e);
-            }
-        } catch (Exception e) {
-            logger.error("解密失败！", e);
-        }
-        return null;
+        return decryptData(ECB, cipherText, null, null);
     }
 
     /**
@@ -174,67 +175,20 @@ public class SM4Utils {
      * @param plainText 要加密的数据
      * @param secretKey 密钥一，必须为 16 位，可包含字母、数字、标点
      * @param iv 密钥二，必须为 16 位，可包含字母、数字、标点
-     * @return
+     * @return 加密后的字符串
      */
     public static String encryptData_CBC(String plainText, String secretKey, String iv) {
-        try {
-            SM4_Context ctx = new SM4_Context();
-            ctx.isPadding = true;
-            ctx.mode = SM4.SM4_ENCRYPT;
-
-            byte[] keyBytes;
-            byte[] ivBytes;
-
-            keyBytes = secretKey.getBytes();
-            ivBytes = iv.getBytes();
-
-            SM4 sm4 = new SM4();
-            sm4.sm4_setkey_enc(ctx, keyBytes);
-            byte[] encrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, plainText.getBytes(StandardCharsets.UTF_8));
-            String cipherText = Base64.encodeBase64String(encrypted);
-            if (cipherText != null && cipherText.trim().length() > 0) {
-                Matcher m = P.matcher(cipherText);
-                cipherText = m.replaceAll("");
-            }
-            return cipherText;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return encryptData(CBC, plainText, secretKey, iv);
     }
 
     /**
      * CBC模式加密，SECRET_KEY和IV都需要传值，解密要和加密的SECRET_KEY和IV一致，更加安全
      *
-     * @param plainText
-     * @return
+     * @param plainText 要加密的数据
+     * @return 加密后的字符串
      */
     public static String encryptData_CBC(String plainText) {
-        try {
-            SM4_Context ctx = new SM4_Context();
-            ctx.isPadding = true;
-            ctx.mode = SM4.SM4_ENCRYPT;
-
-            byte[] keyBytes;
-            byte[] ivBytes;
-
-            keyBytes = SECRET_KEY.getBytes();
-            ivBytes = IV.getBytes();
-
-            SM4 sm4 = new SM4();
-            sm4.sm4_setkey_enc(ctx, keyBytes);
-
-            byte[] encrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, plainText.getBytes(StandardCharsets.UTF_8));
-            String cipherText = Base64.encodeBase64String(encrypted);
-            if (cipherText != null && cipherText.trim().length() > 0) {
-                Matcher m = P.matcher(cipherText);
-                cipherText = m.replaceAll("");
-            }
-            return cipherText;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return encryptData(CBC, plainText, null, null);
     }
 
     /**
@@ -243,72 +197,20 @@ public class SM4Utils {
      * @param cipherText 要解密的数据
      * @param secretKey 密钥一，必须为 16 位，可包含字母、数字、标点
      * @param iv 密钥二，必须为 16 位，可包含字母、数字、标点
-     * @return
+     * @return 解密后的字符串
      */
     public static String decryptData_CBC(String cipherText, String secretKey, String iv) {
-        try {
-            SM4_Context ctx = new SM4_Context();
-            ctx.isPadding = true;
-            ctx.mode = SM4.SM4_DECRYPT;
-
-            byte[] keyBytes;
-            byte[] ivBytes;
-            if (HEX_STRING) {
-                keyBytes = Util.hexStringToBytes(secretKey);
-                ivBytes = Util.hexStringToBytes(iv);
-            } else {
-                keyBytes = secretKey.getBytes();
-                ivBytes = iv.getBytes();
-            }
-
-            SM4 sm4 = new SM4();
-            sm4.sm4_setkey_dec(ctx, keyBytes);
-            try {
-                byte[] decrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, Base64.decodeBase64(cipherText));
-                return new String(decrypted, StandardCharsets.UTF_8);
-            } catch (Exception e) {
-                logger.error("解密失败！", e);
-            }
-        } catch (Exception e) {
-            logger.error("解密失败！", e);
-        }
-        return null;
+        return decryptData(CBC, cipherText, secretKey, iv);
     }
 
     /**
      * CBC模式解密，SECRET_KEY和IV都需要传值，解密要和加密的SECRET_KEY和IV一致，更加安全
      *
      * @param cipherText 要解密的数据
-     * @return
+     * @return 解密后的字符串
      */
     public static String decryptData_CBC(String cipherText) {
-        try {
-            SM4_Context ctx = new SM4_Context();
-            ctx.isPadding = true;
-            ctx.mode = SM4.SM4_DECRYPT;
-
-            byte[] keyBytes;
-            byte[] ivBytes;
-            if (HEX_STRING) {
-                keyBytes = Util.hexStringToBytes(SECRET_KEY);
-                ivBytes = Util.hexStringToBytes(IV);
-            } else {
-                keyBytes = SECRET_KEY.getBytes();
-                ivBytes = IV.getBytes();
-            }
-
-            SM4 sm4 = new SM4();
-            sm4.sm4_setkey_dec(ctx, keyBytes);
-            try {
-                byte[] decrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, Base64.decodeBase64(cipherText));
-                return new String(decrypted, StandardCharsets.UTF_8);
-            } catch (Exception e) {
-                logger.error("解密失败！", e);
-            }
-        } catch (Exception e) {
-            logger.error("解密失败！", e);
-        }
-        return null;
+        return decryptData(CBC, cipherText, null, null);
     }
 
 //    public static void main(String[] args) {
