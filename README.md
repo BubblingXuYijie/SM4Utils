@@ -1,6 +1,17 @@
 # 使用方法
 
-> 直接调用 SM4Util 的方法
+- 引入
+
+```xml
+<!-- https://mvnrepository.com/artifact/icu.xuyijie/SM4Utils -->
+<dependency>
+    <groupId>icu.xuyijie</groupId>
+    <artifactId>SM4Utils</artifactId>
+    <version>1.4.1</version>
+</dependency>
+```
+
+- 使用
 
 ```java
 /**
