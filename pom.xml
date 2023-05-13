@@ -10,7 +10,7 @@
     </parent>
     <groupId>icu.xuyijie</groupId>
     <artifactId>SM4Utils</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
     <packaging>jar</packaging>
     <name>SM4Utils</name>
     <description>SM4EncryptAndDecrypt</description>
@@ -38,7 +38,6 @@
     </scm>
 
     <properties>
-        <java.version>17</java.version>
         <!--下面两行设置跳过doc文档生成，不然deploy报错，但是跳过以后nexus审核不通过-->
 <!--        <maven.javadoc.skip>true</maven.javadoc.skip>-->
 <!--        <additionalparam>-Xdoclint:none</additionalparam>-->
