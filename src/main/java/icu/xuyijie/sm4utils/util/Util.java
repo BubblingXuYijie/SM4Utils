@@ -1,5 +1,8 @@
 package icu.xuyijie.sm4utils.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 
 /**
@@ -7,6 +10,11 @@ import java.math.BigInteger;
  * @date 2022/10/11
  */
 class Util {
+    private Util() {
+
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
     /**
      * 整形转换成网络传输的字节流（字节数组）型数据
@@ -136,7 +144,7 @@ class Util {
             if (hex.length() == 1) {
                 hex = '0' + hex;
             }
-            System.out.print("0x" + hex.toUpperCase() + ",");
+            System.out.println("0x" + hex.toUpperCase() + ",");
         }
     }
 
@@ -298,7 +306,7 @@ class Util {
      * @param content 字符串
      * @return ASCII字符串
      */
-    public static String StringToAsciiString(String content) {
+    public static String stringToAsciiString(String content) {
         StringBuilder result = new StringBuilder();
         int max = content.length();
         for (int i = 0; i < max; i++) {
@@ -411,7 +419,7 @@ class Util {
                     result.append("1111");
                     break;
                 default:
-                    System.out.println("hexStringToBinary无匹配项");
+                    logger.error("hexStringToBinary无匹配项");
                     break;
             }
         }
@@ -424,7 +432,7 @@ class Util {
      * @param content ASCII字符串
      * @return 字符串
      */
-    public static String AsciiStringToString(String content) {
+    public static String asciiStringToString(String content) {
         StringBuilder result = new StringBuilder();
         int length = content.length() / 2;
         for (int i = 0; i < length; i++) {
@@ -464,7 +472,6 @@ class Util {
         StringBuilder result = new StringBuilder();
         char temp;
 
-        int length = bytearray.length;
         for (byte b : bytearray) {
             temp = (char) b;
             result.append(temp);
@@ -484,7 +491,7 @@ class Util {
         for (int i = max; i > 0; i--) {
             char c = binary.charAt(i - 1);
             int algorism = c - '0';
-            result += Math.pow(2, max - i) * algorism;
+            result += Math.pow(2, (double) max - i) * algorism;
         }
         return result;
     }
@@ -495,7 +502,7 @@ class Util {
      * @param algorism int 十进制的数字
      * @return String 对应的十六进制字符串
      */
-    public static String algorismToHEXString(int algorism) {
+    public static String algorismToHexString(int algorism) {
         String result;
         result = Integer.toHexString(algorism);
 
@@ -515,7 +522,7 @@ class Util {
      * @param maxLength int 补充后十六进制字符串的长度
      * @return 补充结果
      */
-    static public String patchHexString(String str, int maxLength) {
+    public static String patchHexString(String str, int maxLength) {
         StringBuilder temp = new StringBuilder();
         for (int i = 0; i < maxLength - str.length(); i++) {
             temp.insert(0, "0");
@@ -571,9 +578,9 @@ class Util {
         char[] arr = hex.toCharArray();
         byte[] b = new byte[hex.length() / 2];
         for (int i = 0, j = 0, l = hex.length(); i < l; i++, j++) {
-            String swap = "" + arr[i++] + arr[i];
+            String swap = String.valueOf(arr[i++]) + arr[i];
             int byteInt = Integer.parseInt(swap, 16) & 0xFF;
-            b[j] = Integer.valueOf(byteInt).byteValue();
+            b[j] = (byte) byteInt;
         }
         return b;
     }

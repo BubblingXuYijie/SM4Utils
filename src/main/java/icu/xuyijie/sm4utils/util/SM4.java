@@ -17,27 +17,27 @@ class SM4 {
 
     public static final int SM4_DECRYPT = 0;
 
-    private int GET_ULONG_BE(byte[] b, int i) {
+    private int getUlongBe(byte[] b, int i) {
         return (b[i] & 0xff) << 24 | ((b[i + 1] & 0xff) << 16) | ((b[i + 2] & 0xff) << 8)
                 | b[i + 3] & 0xff & 0xffffffff;
     }
 
-    private void PUT_ULONG_BE(int n, byte[] b, int i) {
+    private void putUlongBe(int n, byte[] b, int i) {
         b[i] = (byte) (0xFF & n >> 24);
         b[i + 1] = (byte) (0xFF & n >> 16);
         b[i + 2] = (byte) (0xFF & n >> 8);
         b[i + 3] = (byte) (0xFF & n);
     }
 
-    private int SHL(int x, int n) {
+    private int shl(int x, int n) {
         return (x & 0xFFFFFFFF) << n;
     }
 
-    private int ROTL(int x, int n) {
-        return SHL(x, n) | x >> (32 - n);
+    private int rotl(int x, int n) {
+        return shl(x, n) | x >> (32 - n);
     }
 
-    public static final byte[] SBOX_TABLE = {(byte) 0xd6, (byte) 0x90, (byte) 0xe9, (byte) 0xfe, (byte) 0xcc,
+    protected static final byte[] SBOX_TABLE = {(byte) 0xd6, (byte) 0x90, (byte) 0xe9, (byte) 0xfe, (byte) 0xcc,
             (byte) 0xe1, 0x3d, (byte) 0xb7, 0x16, (byte) 0xb6, 0x14, (byte) 0xc2, 0x28, (byte) 0xfb, 0x2c, 0x05, 0x2b,
             0x67, (byte) 0x9a, 0x76, 0x2a, (byte) 0xbe, 0x04, (byte) 0xc3, (byte) 0xaa, 0x44, 0x13, 0x26, 0x49,
             (byte) 0x86, 0x06, (byte) 0x99, (byte) 0x9c, 0x42, 0x50, (byte) 0xf4, (byte) 0x91, (byte) 0xef, (byte) 0x98,
@@ -62,17 +62,16 @@ class SM4 {
             (byte) 0x84, 0x18, (byte) 0xf0, 0x7d, (byte) 0xec, 0x3a, (byte) 0xdc, 0x4d, 0x20, 0x79, (byte) 0xee, 0x5f,
             0x3e, (byte) 0xd7, (byte) 0xcb, 0x39, 0x48};
 
-    public static final int[] FK = {0xa3b1bac6, 0x56aa3350, 0x677d9197, 0xb27022dc};
+    protected static final int[] FK = {0xa3b1bac6, 0x56aa3350, 0x677d9197, 0xb27022dc};
 
-    public static final int[] CK = {0x00070e15, 0x1c232a31, 0x383f464d, 0x545b6269, 0x70777e85, 0x8c939aa1, 0xa8afb6bd,
+    protected static final int[] CK = {0x00070e15, 0x1c232a31, 0x383f464d, 0x545b6269, 0x70777e85, 0x8c939aa1, 0xa8afb6bd,
             0xc4cbd2d9, 0xe0e7eef5, 0xfc030a11, 0x181f262d, 0x343b4249, 0x50575e65, 0x6c737a81, 0x888f969d, 0xa4abb2b9,
             0xc0c7ced5, 0xdce3eaf1, 0xf8ff060d, 0x141b2229, 0x30373e45, 0x4c535a61, 0x686f767d, 0x848b9299, 0xa0a7aeb5,
             0xbcc3cad1, 0xd8dfe6ed, 0xf4fb0209, 0x10171e25, 0x2c333a41, 0x484f565d, 0x646b7279};
 
     private byte sm4Sbox(byte inch) {
         int i = inch & 0xFF;
-        byte retVal = SBOX_TABLE[i];
-        return retVal;
+        return SBOX_TABLE[i];
     }
 
     private int sm4Lt(int ka) {
@@ -80,13 +79,13 @@ class SM4 {
         int c;
         byte[] a = new byte[4];
         byte[] b = new byte[4];
-        PUT_ULONG_BE(ka, a, 0);
+        putUlongBe(ka, a, 0);
         b[0] = sm4Sbox(a[0]);
         b[1] = sm4Sbox(a[1]);
         b[2] = sm4Sbox(a[2]);
         b[3] = sm4Sbox(a[3]);
-        bb = GET_ULONG_BE(b, 0);
-        c = bb ^ ROTL(bb, 2) ^ ROTL(bb, 10) ^ ROTL(bb, 18) ^ ROTL(bb, 24);
+        bb = getUlongBe(b, 0);
+        c = bb ^ rotl(bb, 2) ^ rotl(bb, 10) ^ rotl(bb, 18) ^ rotl(bb, 24);
         return c;
     }
 
@@ -94,54 +93,54 @@ class SM4 {
         return x0 ^ sm4Lt(x1 ^ x2 ^ x3 ^ rk);
     }
 
-    private int sm4CalciRK(int ka) {
+    private int sm4CalciRk(int ka) {
         int bb;
         int rk;
         byte[] a = new byte[4];
         byte[] b = new byte[4];
-        PUT_ULONG_BE(ka, a, 0);
+        putUlongBe(ka, a, 0);
         b[0] = sm4Sbox(a[0]);
         b[1] = sm4Sbox(a[1]);
         b[2] = sm4Sbox(a[2]);
         b[3] = sm4Sbox(a[3]);
-        bb = GET_ULONG_BE(b, 0);
-        rk = bb ^ ROTL(bb, 13) ^ ROTL(bb, 23);
+        bb = getUlongBe(b, 0);
+        rk = bb ^ rotl(bb, 13) ^ rotl(bb, 23);
         return rk;
     }
 
-    private void sm4_setkey(int[] SK, byte[] key) {
+    private void sm4SetKey(int[] sk, byte[] key) {
         int[] mK = new int[4];
         int[] k = new int[36];
         int i = 0;
-        mK[0] = GET_ULONG_BE(key, 0);
-        mK[1] = GET_ULONG_BE(key, 4);
-        mK[2] = GET_ULONG_BE(key, 8);
-        mK[3] = GET_ULONG_BE(key, 12);
+        mK[0] = getUlongBe(key, 0);
+        mK[1] = getUlongBe(key, 4);
+        mK[2] = getUlongBe(key, 8);
+        mK[3] = getUlongBe(key, 12);
         k[0] = mK[0] ^ FK[0];
         k[1] = mK[1] ^ FK[1];
         k[2] = mK[2] ^ FK[2];
         k[3] = mK[3] ^ FK[3];
         for (; i < 32; i++) {
-            k[(i + 4)] = (k[i] ^ sm4CalciRK(k[(i + 1)] ^ k[(i + 2)] ^ k[(i + 3)] ^ (int) CK[i]));
-            SK[i] = k[(i + 4)];
+            k[(i + 4)] = (k[i] ^ sm4CalciRk(k[(i + 1)] ^ k[(i + 2)] ^ k[(i + 3)] ^ CK[i]));
+            sk[i] = k[(i + 4)];
         }
     }
 
-    private void sm4_one_round(int[] sk, byte[] input, byte[] output) {
+    private void sm4OneRound(int[] sk, byte[] input, byte[] output) {
         int i = 0;
         int[] ulbuf = new int[36];
-        ulbuf[0] = GET_ULONG_BE(input, 0);
-        ulbuf[1] = GET_ULONG_BE(input, 4);
-        ulbuf[2] = GET_ULONG_BE(input, 8);
-        ulbuf[3] = GET_ULONG_BE(input, 12);
+        ulbuf[0] = getUlongBe(input, 0);
+        ulbuf[1] = getUlongBe(input, 4);
+        ulbuf[2] = getUlongBe(input, 8);
+        ulbuf[3] = getUlongBe(input, 12);
         while (i < 32) {
             ulbuf[(i + 4)] = sm4F(ulbuf[i], ulbuf[(i + 1)], ulbuf[(i + 2)], ulbuf[(i + 3)], sk[i]);
             i++;
         }
-        PUT_ULONG_BE(ulbuf[35], output, 0);
-        PUT_ULONG_BE(ulbuf[34], output, 4);
-        PUT_ULONG_BE(ulbuf[33], output, 8);
-        PUT_ULONG_BE(ulbuf[32], output, 12);
+        putUlongBe(ulbuf[35], output, 0);
+        putUlongBe(ulbuf[34], output, 4);
+        putUlongBe(ulbuf[33], output, 8);
+        putUlongBe(ulbuf[32], output, 12);
     }
 
     private byte[] padding(byte[] input, int mode) {
@@ -184,13 +183,13 @@ class SM4 {
         }
     }
 
-    public void sm4_setkey_enc(SM4_Context ctx, byte[] key) throws Exception {
+    public void sm4SetKeyEnc(SM4_Context ctx, byte[] key) throws Exception {
         validateDecrypt(ctx, key);
         ctx.mode = SM4_ENCRYPT;
-        sm4_setkey(ctx.sk, key);
+        sm4SetKey(ctx.sk, key);
     }
 
-    public byte[] sm4_crypt_ecb(SM4_Context ctx, byte[] input) throws Exception {
+    public byte[] sm4CryptEcb(SM4_Context ctx, byte[] input) throws Exception {
         validateEncrypt(SM4Utils.ECB, null, input);
         if ((ctx.isPadding) && (ctx.mode == SM4_ENCRYPT)) {
             input = padding(input, SM4_ENCRYPT);
@@ -203,7 +202,7 @@ class SM4 {
             byte[] in = new byte[16];
             byte[] out = new byte[16];
             bins.read(in);
-            sm4_one_round(ctx.sk, in, out);
+            sm4OneRound(ctx.sk, in, out);
             bous.write(out);
         }
 
@@ -216,23 +215,23 @@ class SM4 {
         return output;
     }
 
-    public void sm4_setkey_dec(SM4_Context ctx, byte[] key) throws Exception {
+    public void sm4SetKeyDec(SM4_Context ctx, byte[] key) throws Exception {
         validateDecrypt(ctx, key);
         int i;
         ctx.mode = SM4_DECRYPT;
-        sm4_setkey(ctx.sk, key);
+        sm4SetKey(ctx.sk, key);
         for (i = 0; i < 16; i++) {
-            SWAP(ctx.sk, i);
+            swap(ctx.sk, i);
         }
     }
 
-    private void SWAP(int[] sk, int i) {
+    private void swap(int[] sk, int i) {
         int t = sk[i];
         sk[i] = sk[(31 - i)];
         sk[(31 - i)] = t;
     }
 
-    public byte[] sm4_crypt_cbc(SM4_Context ctx, byte[] iv, byte[] input) throws Exception {
+    public byte[] sm4CryptCbc(SM4_Context ctx, byte[] iv, byte[] input) throws Exception {
         validateEncrypt(SM4Utils.CBC, iv, input);
         if (ctx.isPadding && ctx.mode == SM4_ENCRYPT) {
             input = padding(input, SM4_ENCRYPT);
@@ -251,7 +250,7 @@ class SM4 {
                 for (i = 0; i < 16; i++) {
                     out[i] = ((byte) (in[i] ^ iv[i]));
                 }
-                sm4_one_round(ctx.sk, out, out1);
+                sm4OneRound(ctx.sk, out, out1);
                 System.arraycopy(out1, 0, iv, 0, 16);
                 bous.write(out1);
             }
@@ -264,7 +263,7 @@ class SM4 {
 
                 bins.read(in);
                 System.arraycopy(in, 0, temp, 0, 16);
-                sm4_one_round(ctx.sk, in, out);
+                sm4OneRound(ctx.sk, in, out);
                 for (i = 0; i < 16; i++) {
                     out1[i] = ((byte) (out[i] ^ iv[i]));
                 }
