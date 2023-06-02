@@ -10,10 +10,10 @@
     </parent>
     <groupId>icu.xuyijie</groupId>
     <artifactId>SM4Utils</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4</version>
     <packaging>jar</packaging>
     <name>SM4Utils</name>
-    <description>SM4EncryptAndDecrypt</description>
+    <description>SM4 encrypt and decrypt</description>
 
     <licenses>
         <license>

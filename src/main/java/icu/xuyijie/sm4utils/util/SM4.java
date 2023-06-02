@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * @author 徐一杰
@@ -160,36 +161,36 @@ class SM4 {
         return ret;
     }
 
-    private void validateDecrypt(SM4_Context ctx, byte[] key) throws Exception {
+    private void validateDecrypt(SM4_Context ctx, byte[] key) throws NullPointerException {
         if (ctx == null) {
             logger.error("ctx is null");
-            throw new Exception("ctx is null!");
+            throw new NullPointerException("ctx is null!");
         }
         if (key == null || key.length != 16) {
             logger.error("secretKey必须为 16 位，可包含字母、数字、标点");
-            throw new Exception("secretKey必须为 16 位，可包含字母、数字、标点");
+            throw new NullPointerException("secretKey必须为 16 位，可包含字母、数字、标点");
         }
     }
 
-    private void validateEncrypt(String type, byte[] iv, byte[] input) throws Exception {
+    private void validateEncrypt(String type, byte[] iv, byte[] input) throws IllegalArgumentException {
         if (SM4Utils.CBC.equals(type) && (iv == null || iv.length != 16)) {
             logger.error("iv必须为 16 位，可包含字母、数字、标点");
-            throw new Exception("iv必须为 16 位，可包含字母、数字、标点");
+            throw new IllegalArgumentException("iv必须为 16 位，可包含字母、数字、标点");
         }
 
         if (input == null) {
             logger.error("要加解密的数据为null");
-            throw new Exception("要加解密的数据为null");
+            throw new IllegalArgumentException("要加解密的数据为null");
         }
     }
 
-    public void sm4SetKeyEnc(SM4_Context ctx, byte[] key) throws Exception {
+    public void sm4SetKeyEnc(SM4_Context ctx, byte[] key) {
         validateDecrypt(ctx, key);
         ctx.mode = SM4_ENCRYPT;
         sm4SetKey(ctx.sk, key);
     }
 
-    public byte[] sm4CryptEcb(SM4_Context ctx, byte[] input) throws Exception {
+    public byte[] sm4CryptEcb(SM4_Context ctx, byte[] input) throws IOException {
         validateEncrypt(SM4Utils.ECB, null, input);
         if ((ctx.isPadding) && (ctx.mode == SM4_ENCRYPT)) {
             input = padding(input, SM4_ENCRYPT);
@@ -215,7 +216,7 @@ class SM4 {
         return output;
     }
 
-    public void sm4SetKeyDec(SM4_Context ctx, byte[] key) throws Exception {
+    public void sm4SetKeyDec(SM4_Context ctx, byte[] key) {
         validateDecrypt(ctx, key);
         int i;
         ctx.mode = SM4_DECRYPT;
@@ -231,7 +232,7 @@ class SM4 {
         sk[(31 - i)] = t;
     }
 
-    public byte[] sm4CryptCbc(SM4_Context ctx, byte[] iv, byte[] input) throws Exception {
+    public byte[] sm4CryptCbc(SM4_Context ctx, byte[] iv, byte[] input) throws IOException {
         validateEncrypt(SM4Utils.CBC, iv, input);
         if (ctx.isPadding && ctx.mode == SM4_ENCRYPT) {
             input = padding(input, SM4_ENCRYPT);
@@ -245,7 +246,6 @@ class SM4 {
                 byte[] in = new byte[16];
                 byte[] out = new byte[16];
                 byte[] out1 = new byte[16];
-
                 bins.read(in);
                 for (i = 0; i < 16; i++) {
                     out[i] = ((byte) (in[i] ^ iv[i]));
@@ -260,7 +260,6 @@ class SM4 {
                 byte[] in = new byte[16];
                 byte[] out = new byte[16];
                 byte[] out1 = new byte[16];
-
                 bins.read(in);
                 System.arraycopy(in, 0, temp, 0, 16);
                 sm4OneRound(ctx.sk, in, out);
@@ -271,7 +270,6 @@ class SM4 {
                 bous.write(out1);
             }
         }
-
         byte[] output = bous.toByteArray();
         if (ctx.isPadding && ctx.mode == SM4_DECRYPT) {
             output = padding(output, SM4_DECRYPT);
@@ -280,4 +278,5 @@ class SM4 {
         bous.close();
         return output;
     }
+
 }
