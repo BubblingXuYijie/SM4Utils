@@ -38,7 +38,6 @@
     </scm>
 
     <properties>
-        <!--下面两行设置跳过doc文档生成，不然deploy报错，但是跳过以后nexus审核不通过-->
 <!--        <maven.javadoc.skip>true</maven.javadoc.skip>-->
 <!--        <additionalparam>-Xdoclint:none</additionalparam>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
