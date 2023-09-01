@@ -24,7 +24,7 @@ class Util {
      */
     public static byte[] intToBytes(int num) {
         byte[] bytes = new byte[4];
-        bytes[0] = (byte) (0xff & (num >> 0));
+        bytes[0] = (byte) (0xff & (num));
         bytes[1] = (byte) (0xff & (num >> 8));
         bytes[2] = (byte) (0xff & (num >> 16));
         bytes[3] = (byte) (0xff & (num >> 24));
@@ -40,7 +40,7 @@ class Util {
     public static int byteToInt(byte[] bytes) {
         int num = 0;
         int temp;
-        temp = (0x000000ff & (bytes[0])) << 0;
+        temp = (0x000000ff & (bytes[0]));
         num = num | temp;
         temp = (0x000000ff & (bytes[1])) << 8;
         num = num | temp;
@@ -68,8 +68,8 @@ class Util {
     /**
      * 大数字转换字节流（字节数组）型数据
      *
-     * @param n
-     * @return
+     * @param n 大数字
+     * @return 字节流（字节数组）
      */
     public static byte[] byteConvert32Bytes(BigInteger n) {
         byte[] tmp;
@@ -93,10 +93,10 @@ class Util {
     }
 
     /**
-     * 换字节流（字节数组）型数据转大数字
+     * 字节流（字节数组）型数据转大数字
      *
-     * @param b
-     * @return
+     * @param b 字节流（字节数组）
+     * @return 大数字
      */
     public static BigInteger byteConvertInteger(byte[] b) {
         if (b[0] < 0) {
@@ -111,8 +111,8 @@ class Util {
     /**
      * 根据字节数组获得值(十六进制数字)
      *
-     * @param bytes
-     * @return
+     * @param bytes 字节数组
+     * @return 十六进制数字
      */
     public static String getHexString(byte[] bytes) {
         return getHexString(bytes, true);
@@ -121,9 +121,9 @@ class Util {
     /**
      * 根据字节数组获得值(十六进制数字)
      *
-     * @param bytes
-     * @param upperCase
-     * @return
+     * @param bytes     字节数组
+     * @param upperCase 是否大写
+     * @return 十六进制数字
      */
     public static String getHexString(byte[] bytes, boolean upperCase) {
         StringBuilder ret = new StringBuilder();
@@ -136,7 +136,7 @@ class Util {
     /**
      * 打印十六进制字符串
      *
-     * @param bytes
+     * @param bytes 字节数组
      */
     public static void printHexString(byte[] bytes) {
         for (byte aByte : bytes) {
@@ -155,7 +155,7 @@ class Util {
      * @return byte[]
      */
     public static byte[] hexStringToBytes(String hexString) {
-        if (hexString == null || "".equals(hexString)) {
+        if (hexString == null || hexString.isEmpty()) {
             return null;
         }
         hexString = hexString.toUpperCase();
@@ -164,7 +164,7 @@ class Util {
         byte[] d = new byte[length];
         for (int i = 0; i < length; i++) {
             int pos = i * 2;
-            d[i] = (byte) (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));
+            d[i] = (byte) (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]) & 0xff);
         }
         return d;
     }
@@ -221,9 +221,10 @@ class Util {
         int l = data.length;
         char[] out = new char[l << 1];
         // two characters form the hex value.
-        for (int i = 0, j = 0; i < l; i++) {
-            out[j++] = toDigits[(0xF0 & data[i]) >>> 4];
-            out[j++] = toDigits[0x0F & data[i]];
+        int j = 0;
+        for (byte datum : data) {
+            out[j++] = toDigits[(0xF0 & datum) >>> 4];
+            out[j++] = toDigits[0x0F & datum];
         }
         return out;
     }
@@ -270,11 +271,12 @@ class Util {
     public static byte[] decodeHex(char[] data) {
         int len = data.length;
         if ((len & 0x01) != 0) {
-            throw new RuntimeException("Odd number of characters.");
+            throw new IllegalArgumentException("十六进制char[]不合法");
         }
         byte[] out = new byte[len >> 1];
         // two characters form the hex value.
-        for (int i = 0, j = 0; j < len; i++) {
+        int j = 0;
+        for (int i = 0; j < len; i++) {
             int f = toDigit(data[j], j) << 4;
             j++;
             f = f | toDigit(data[j], j);
@@ -295,7 +297,7 @@ class Util {
     protected static int toDigit(char ch, int index) {
         int digit = Character.digit(ch, 16);
         if (digit == -1) {
-            throw new RuntimeException("Illegal hexadecimal character " + ch + " at index " + index);
+            throw new IllegalArgumentException("Illegal hexadecimal character " + ch + " at index " + index);
         }
         return digit;
     }
@@ -335,7 +337,7 @@ class Util {
     }
 
     /**
-     * 十六进制字符串装十进制
+     * 十六进制字符串转换十进制
      *
      * @param hex 十六进制字符串
      * @return 十进制数值
@@ -346,13 +348,13 @@ class Util {
         int result = 0;
         for (int i = max; i > 0; i--) {
             char c = hex.charAt(i - 1);
-            int algorism;
+            int algorithm;
             if (c >= '0' && c <= '9') {
-                algorism = c - '0';
+                algorithm = c - '0';
             } else {
-                algorism = c - 55;
+                algorithm = c - 55;
             }
-            result += Math.pow(16, max - i) * algorism;
+            result += (int) (Math.pow(16, (max - i)) * algorithm);
         }
         return result;
     }
@@ -448,7 +450,7 @@ class Util {
     /**
      * 将十进制转换为指定长度的十六进制字符串
      *
-     * @param algorism  int 十进制数字
+     * @param algorism int 十进制数字
      * @param maxLength int 转换后的十六进制字符串长度
      * @return String 转换后的十六进制字符串
      */
@@ -491,7 +493,7 @@ class Util {
         for (int i = max; i > 0; i--) {
             char c = binary.charAt(i - 1);
             int algorism = c - '0';
-            result += Math.pow(2, (double) max - i) * algorism;
+            result += (int) (Math.pow(2, (max - i)) * algorism);
         }
         return result;
     }

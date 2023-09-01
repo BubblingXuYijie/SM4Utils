@@ -58,7 +58,7 @@ public class SM4Utils {
 
     private static String encryptData(String type, String plainText, String secretKey, String iv) {
         try {
-            SM4_Context ctx = new SM4_Context();
+            SM4Context ctx = new SM4Context();
             ctx.isPadding = true;
             ctx.mode = SM4.SM4_ENCRYPT;
 
@@ -70,7 +70,7 @@ public class SM4Utils {
             if (ECB.equals(type)) {
                 byte[] encrypted = sm4.sm4CryptEcb(ctx, plainText.getBytes(StandardCharsets.UTF_8));
                 cipherText = Base64.encodeBase64String(encrypted);
-                if (cipherText != null && cipherText.trim().length() > 0) {
+                if (cipherText != null && !cipherText.trim().isEmpty()) {
                     Matcher m = P.matcher(cipherText);
                     cipherText = m.replaceAll("");
                 }
@@ -78,7 +78,7 @@ public class SM4Utils {
                 byte[] ivBytes = iv == null ? IV.getBytes() : iv.getBytes();
                 byte[] encrypted = sm4.sm4CryptCbc(ctx, ivBytes, plainText.getBytes(StandardCharsets.UTF_8));
                 cipherText = Base64.encodeBase64String(encrypted);
-                if (cipherText != null && cipherText.trim().length() > 0) {
+                if (cipherText != null && !cipherText.trim().isEmpty()) {
                     Matcher m = P.matcher(cipherText);
                     cipherText = m.replaceAll("");
                 }
@@ -92,7 +92,7 @@ public class SM4Utils {
 
     private static String decryptData(String type, String cipherText, String secretKey, String iv) {
         try {
-            SM4_Context ctx = new SM4_Context();
+            SM4Context ctx = new SM4Context();
             ctx.isPadding = true;
             ctx.mode = SM4.SM4_DECRYPT;
 
@@ -214,5 +214,7 @@ public class SM4Utils {
 //        System.out.println("经过ECB解密的密文为：" + SM4Utils.decryptData_ECB("ZaCySfpl8DLflqpnM67eqBuFHqHevz6NvJY7i77t4zk="));
 //        System.out.println("经过CBC自定义密钥加密的密文为：" + SM4Utils.encryptData_CBC("41150320000416041X", "1sdfghjklzxcvbnm", ".234567890@$^-_*"));
 //        System.out.println("经过CBC自定义密钥解密的密文为：" + SM4Utils.decryptData_CBC("eB/OnKKFHwNLBl7s4QvGX7rtqS0LqfmU8AuXnhqjCbM=", "1sdfghjklzxcvbnm", ".234567890@$^-_*"));
+//        System.out.println(SM4Utils.encryptData_CBC("圣诞卡是你打死你"));
+//        System.out.println(SM4Utils.decryptData_CBC("fhMAEzAxdPNTe9I346GNTgQmnjpBfjJHQCFj+TxQDUg="));
 //    }
 }

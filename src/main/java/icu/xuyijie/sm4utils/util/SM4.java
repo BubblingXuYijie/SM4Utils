@@ -161,7 +161,7 @@ class SM4 {
         return ret;
     }
 
-    private void validateDecrypt(SM4_Context ctx, byte[] key) throws NullPointerException {
+    private void validateDecrypt(SM4Context ctx, byte[] key) throws NullPointerException {
         if (ctx == null) {
             logger.error("ctx is null");
             throw new NullPointerException("ctx is null!");
@@ -184,13 +184,13 @@ class SM4 {
         }
     }
 
-    public void sm4SetKeyEnc(SM4_Context ctx, byte[] key) {
+    public void sm4SetKeyEnc(SM4Context ctx, byte[] key) {
         validateDecrypt(ctx, key);
         ctx.mode = SM4_ENCRYPT;
         sm4SetKey(ctx.sk, key);
     }
 
-    public byte[] sm4CryptEcb(SM4_Context ctx, byte[] input) throws IOException {
+    public byte[] sm4CryptEcb(SM4Context ctx, byte[] input) throws IOException {
         validateEncrypt(SM4Utils.ECB, null, input);
         if ((ctx.isPadding) && (ctx.mode == SM4_ENCRYPT)) {
             input = padding(input, SM4_ENCRYPT);
@@ -216,7 +216,7 @@ class SM4 {
         return output;
     }
 
-    public void sm4SetKeyDec(SM4_Context ctx, byte[] key) {
+    public void sm4SetKeyDec(SM4Context ctx, byte[] key) {
         validateDecrypt(ctx, key);
         int i;
         ctx.mode = SM4_DECRYPT;
@@ -232,7 +232,7 @@ class SM4 {
         sk[(31 - i)] = t;
     }
 
-    public byte[] sm4CryptCbc(SM4_Context ctx, byte[] iv, byte[] input) throws IOException {
+    public byte[] sm4CryptCbc(SM4Context ctx, byte[] iv, byte[] input) throws IOException {
         validateEncrypt(SM4Utils.CBC, iv, input);
         if (ctx.isPadding && ctx.mode == SM4_ENCRYPT) {
             input = padding(input, SM4_ENCRYPT);
