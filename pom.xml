@@ -16,9 +16,14 @@
     <description>SM4 encrypt and decrypt</description>
 
     <licenses>
+<!--        <license>-->
+<!--            <name>GNU General Public License v3.0</name>-->
+<!--            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>-->
+<!--            <distribution>repo</distribution>-->
+<!--        </license>-->
         <license>
-            <name>GNU General Public License v3.0</name>
-            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+            <name>MIT License</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -32,9 +37,9 @@
 
     <scm>
         <tag>main</tag>
-        <url>https://github.com/XuYijie000416/SM4Util.git</url>
-        <connection>https://github.com/XuYijie000416/SM4Util.git</connection>
-        <developerConnection>https://github.com/XuYijie000416/SM4Util.git</developerConnection>
+        <url>https://github.com/BubblingXuYijie/SM4Utils</url>
+        <connection>https://github.com/BubblingXuYijie/SM4Utils</connection>
+        <developerConnection>https://github.com/BubblingXuYijie/SM4Utils</developerConnection>
     </scm>
 
     <properties>
