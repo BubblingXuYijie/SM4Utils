@@ -10,18 +10,18 @@
     </parent>
     <groupId>icu.xuyijie</groupId>
     <artifactId>SM4Utils</artifactId>
-    <version>1.4.5</version>
+    <version>1.4.6</version>
     <packaging>jar</packaging>
     <name>SM4Utils</name>
     <description>SM4 encrypt and decrypt</description>
     <url>https://github.com/BubblingXuYijie/SM4Utils</url>
 
     <licenses>
-<!--        <license>-->
-<!--            <name>GNU General Public License v3.0</name>-->
-<!--            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>-->
-<!--            <distribution>repo</distribution>-->
-<!--        </license>-->
+        <!--        <license>-->
+        <!--            <name>GNU General Public License v3.0</name>-->
+        <!--            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>-->
+        <!--            <distribution>repo</distribution>-->
+        <!--        </license>-->
         <license>
             <name>MIT License</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0</url>
@@ -44,8 +44,8 @@
     </scm>
 
     <properties>
-<!--        <maven.javadoc.skip>true</maven.javadoc.skip>-->
-<!--        <additionalparam>-Xdoclint:none</additionalparam>-->
+        <!--        <maven.javadoc.skip>true</maven.javadoc.skip>-->
+        <!--        <additionalparam>-Xdoclint:none</additionalparam>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -53,11 +53,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <optional>true</optional>
         </dependency>
         <!--base64编码-->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -101,7 +103,7 @@
                 </executions>
                 <configuration>
                     <doclint>none</doclint>
-<!--                    <skip>true</skip>-->
+                    <!--                    <skip>true</skip>-->
                 </configuration>
             </plugin>
             <plugin>
