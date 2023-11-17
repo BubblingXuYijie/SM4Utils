@@ -1,18 +1,17 @@
 package icu.xuyijie.sm4utils.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author 徐一杰
  * @date 2022/10/11
  */
 class SM4 {
-    private static final Logger logger = LoggerFactory.getLogger(SM4.class);
+    private static final Logger logger = Logger.getLogger(SM4.class.getPackage().getName());
 
     public static final int SM4_ENCRYPT = 1;
 
@@ -163,23 +162,23 @@ class SM4 {
 
     private void validateDecrypt(SM4Context ctx, byte[] key) throws NullPointerException {
         if (ctx == null) {
-            logger.error("ctx is null");
+            logger.log(Level.WARNING, "ctx is null");
             throw new NullPointerException("ctx is null!");
         }
         if (key == null || key.length != 16) {
-            logger.error("secretKey必须为 16 位，可包含字母、数字、标点");
+            logger.log(Level.WARNING, "secretKey必须为 16 位，可包含字母、数字、标点");
             throw new NullPointerException("secretKey必须为 16 位，可包含字母、数字、标点");
         }
     }
 
     private void validateEncrypt(String type, byte[] iv, byte[] input) throws IllegalArgumentException {
         if (SM4Utils.CBC.equals(type) && (iv == null || iv.length != 16)) {
-            logger.error("iv必须为 16 位，可包含字母、数字、标点");
+            logger.log(Level.WARNING, "iv必须为 16 位，可包含字母、数字、标点");
             throw new IllegalArgumentException("iv必须为 16 位，可包含字母、数字、标点");
         }
 
         if (input == null) {
-            logger.error("要加解密的数据为null");
+            logger.log(Level.WARNING, "要加解密的数据为null");
             throw new IllegalArgumentException("要加解密的数据为null");
         }
     }

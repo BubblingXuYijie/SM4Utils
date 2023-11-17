@@ -1,10 +1,10 @@
 package icu.xuyijie.sm4utils.util;
 
 import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +32,7 @@ public class SM4Utils {
 
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(SM4Utils.class);
+    private static final Logger logger = Logger.getLogger(SM4Utils.class.getPackage().getName());
 
     /**
      * 默认 SECRET_KEY
@@ -85,7 +85,7 @@ public class SM4Utils {
             }
             return cipherText;
         } catch (Exception e) {
-            logger.error("加密失败！", e);
+            logger.log(Level.WARNING, "加密失败！", e);
             return null;
         }
     }
@@ -117,7 +117,7 @@ public class SM4Utils {
                 return new String(decrypted, StandardCharsets.UTF_8);
             }
         } catch (Exception e) {
-            logger.error("解密失败！请检查密钥和密文是否对应", e);
+            logger.log(Level.WARNING, "解密失败！请检查密钥和密文是否对应", e);
             return null;
         }
     }

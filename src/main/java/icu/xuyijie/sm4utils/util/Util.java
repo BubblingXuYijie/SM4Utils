@@ -1,9 +1,8 @@
 package icu.xuyijie.sm4utils.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author 徐一杰
@@ -14,7 +13,7 @@ class Util {
 
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(Util.class);
+    private static final Logger logger = Logger.getLogger(Util.class.getPackage().getName());
 
     /**
      * 整形转换成网络传输的字节流（字节数组）型数据
@@ -421,7 +420,7 @@ class Util {
                     result.append("1111");
                     break;
                 default:
-                    logger.error("hexStringToBinary无匹配项");
+                    logger.log(Level.WARNING, "hexStringToBinary无匹配项");
                     break;
             }
         }
