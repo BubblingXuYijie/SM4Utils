@@ -147,7 +147,7 @@ public class SM4Utils {
      * ECB模式解密，自定义密钥，加解密密钥需一致
      *
      * @param cipherText 要解密的数据
-     * @param secretKey 密钥，必须为 16 位，可包含字母、数字、标点
+     * @param secretKey  密钥，必须为 16 位，可包含字母、数字、标点
      * @return 解密后的字符串
      */
     public static String decryptData_ECB(String cipherText, String secretKey) {
@@ -169,7 +169,7 @@ public class SM4Utils {
      *
      * @param plainText 要加密的数据
      * @param secretKey 密钥一，必须为 16 位，可包含字母、数字、标点
-     * @param iv 密钥二，必须为 16 位，可包含字母、数字、标点
+     * @param iv        密钥二，必须为 16 位，可包含字母、数字、标点
      * @return 加密后的字符串
      */
     public static String encryptData_CBC(String plainText, String secretKey, String iv) {
@@ -190,8 +190,8 @@ public class SM4Utils {
      * CBC模式解密，SECRET_KEY和IV都需要传值，解密要和加密的SECRET_KEY和IV一致，更加安全
      *
      * @param cipherText 要解密的数据
-     * @param secretKey 密钥一，必须为 16 位，可包含字母、数字、标点
-     * @param iv 密钥二，必须为 16 位，可包含字母、数字、标点
+     * @param secretKey  密钥一，必须为 16 位，可包含字母、数字、标点
+     * @param iv         密钥二，必须为 16 位，可包含字母、数字、标点
      * @return 解密后的字符串
      */
     public static String decryptData_CBC(String cipherText, String secretKey, String iv) {

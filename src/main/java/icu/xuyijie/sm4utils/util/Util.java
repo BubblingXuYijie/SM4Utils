@@ -449,7 +449,7 @@ class Util {
     /**
      * 将十进制转换为指定长度的十六进制字符串
      *
-     * @param algorism int 十进制数字
+     * @param algorism  int 十进制数字
      * @param maxLength int 转换后的十六进制字符串长度
      * @return String 转换后的十六进制字符串
      */
