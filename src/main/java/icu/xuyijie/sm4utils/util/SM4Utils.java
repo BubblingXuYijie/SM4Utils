@@ -1,8 +1,7 @@
 package icu.xuyijie.sm4utils.util;
 
-import org.apache.commons.codec.binary.Base64;
-
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -69,7 +68,7 @@ public class SM4Utils {
             String cipherText;
             if (ECB.equals(type)) {
                 byte[] encrypted = sm4.sm4CryptEcb(ctx, plainText.getBytes(StandardCharsets.UTF_8));
-                cipherText = Base64.encodeBase64String(encrypted);
+                cipherText = Base64.getEncoder().encodeToString(encrypted);
                 if (cipherText != null && !cipherText.trim().isEmpty()) {
                     Matcher m = P.matcher(cipherText);
                     cipherText = m.replaceAll("");
@@ -77,7 +76,7 @@ public class SM4Utils {
             } else {
                 byte[] ivBytes = iv == null ? IV.getBytes() : iv.getBytes();
                 byte[] encrypted = sm4.sm4CryptCbc(ctx, ivBytes, plainText.getBytes(StandardCharsets.UTF_8));
-                cipherText = Base64.encodeBase64String(encrypted);
+                cipherText = Base64.getEncoder().encodeToString(encrypted);
                 if (cipherText != null && !cipherText.trim().isEmpty()) {
                     Matcher m = P.matcher(cipherText);
                     cipherText = m.replaceAll("");
@@ -100,7 +99,7 @@ public class SM4Utils {
             byte[] bytes = secretKey == null ? SECRET_KEY.getBytes() : secretKey.getBytes();
             if (ECB.equals(type)) {
                 sm4.sm4SetKeyDec(ctx, bytes);
-                byte[] decrypted = sm4.sm4CryptEcb(ctx, Base64.decodeBase64(cipherText));
+                byte[] decrypted = sm4.sm4CryptEcb(ctx, Base64.getDecoder().decode(cipherText));
                 return new String(decrypted, StandardCharsets.UTF_8);
             } else {
                 byte[] keyBytes;
@@ -113,7 +112,7 @@ public class SM4Utils {
                     ivBytes = iv == null ? IV.getBytes() : iv.getBytes();
                 }
                 sm4.sm4SetKeyDec(ctx, keyBytes);
-                byte[] decrypted = sm4.sm4CryptCbc(ctx, ivBytes, Base64.decodeBase64(cipherText));
+                byte[] decrypted = sm4.sm4CryptCbc(ctx, ivBytes, Base64.getDecoder().decode(cipherText));
                 return new String(decrypted, StandardCharsets.UTF_8);
             }
         } catch (Exception e) {

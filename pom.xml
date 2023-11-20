@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>icu.xuyijie</groupId>
     <artifactId>SM4Utils</artifactId>
-    <version>1.4.7</version>
+    <version>1.4.8</version>
     <packaging>jar</packaging>
     <name>SM4Utils</name>
     <description>SM4 encrypt and decrypt</description>
@@ -46,11 +46,7 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.16.0</version>
-        </dependency>
+
     </dependencies>
 
     <distributionManagement>
