@@ -31,10 +31,9 @@
     </developers>
 
     <scm>
-        <tag>main</tag>
         <url>https://github.com/BubblingXuYijie/SM4Utils</url>
-        <connection>scm:git:https://github.com/BubblingXuYijie/SM4Utils</connection>
-        <developerConnection>scm:git:https://github.com/BubblingXuYijie/SM4Utils</developerConnection>
+        <connection>scm:git:git@github.com:BubblingXuYijie/SM4Utils.git</connection>
+        <developerConnection>scm:git:git@github.com:BubblingXuYijie/SM4Utils.git</developerConnection>
     </scm>
 
     <properties>
